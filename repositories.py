@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import Optional, List, Dict
 
 from library_management_system.models import Book, Member, Loan
@@ -72,7 +73,7 @@ class FileBasedBookRepository(BookRepository):
     def load(self):
 
         try:
-            with open("books.txt", "r+") as file:
+            with open(self.filename, "r+") as file:
 
                 for data in file:
                     split_data = data.strip().split(",")
@@ -175,7 +176,11 @@ class FileBasedLoanRepository(LoanRepository):
                     split_data = data.strip().split(",")
                     loan = Loan(loan_id=split_data[0],
                                 member_id=split_data[1],
-                                book_id=split_data[2])
+                                book_id=split_data[2],
+                                borrowed_at=datetime.strptime(split_data[3],"%Y-%m-%d %H:%M:%S"),
+                                returned_at=
+                                None if split_data[4] == "None" else
+                                datetime.strptime(split_data[4],"%Y-%m-%d %H:%M:%S"))
 
                     self.loans[loan.loan_id] = loan
 

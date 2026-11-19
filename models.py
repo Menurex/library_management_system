@@ -30,8 +30,8 @@ class Loan:
     loan_id: str
     member_id: str
     book_id: str
-    borrowed_at: datetime = field(default=datetime.now())
-    returned_at: Optional[datetime] = field(default=None)
+    borrowed_at: datetime
+    returned_at: Optional[datetime] = None
 
     def is_active(self):
         return self.returned_at is None
