@@ -80,7 +80,13 @@ class LibraryManagementService:
         if self.book_repository.get_by_id(book_id=loan.book_id) is None:
             raise ValueError("NO book registered to this book ID")
 
+        book = self.book_repository.get_by_id(book_id=loan.book_id)
+
+        if book.book_lend_member_id is not None:
+            raise ValueError("This book already borrowed")
+
         self.loan_repository.add_loan(loan=loan)
+        self.book_repository.save()
 
     def get_loan_by_id(self, loan_id: str) -> Optional[Loan]:
 
@@ -102,4 +108,4 @@ class LibraryManagementService:
             raise ValueError("No loan have been given to this loan ID")
 
         self.loan_repository.update_loan(loan=loan)
-
+        self.book_repository.save()

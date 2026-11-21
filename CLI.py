@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from library_management_system.models import Book, Member, Loan
 from library_management_system.repositories import FileBasedBookRepository, FileBasedMemberRepository, \
     FileBasedLoanRepository
@@ -18,7 +17,7 @@ def add_book():
     author = input("Enter Author: ")
     year = input("Enter Published Year: ")
 
-    new_book = Book(book_id=book_id,title=title,author=author,year=year)
+    new_book = Book(book_id=book_id,title=title,author=author,year=year,book_lend_member_id=None)
     library_management_service.add_book(book=new_book)
 
     print("\nBook Added Successfully")
@@ -47,7 +46,7 @@ def update_book():
     author = input("Enter Author: ")
     year = input("Enter Published Year: ")
 
-    up_book = Book(book_id=book_id, title=title, author=author, year=year)
+    up_book = Book(book_id=book_id, title=title, author=author, year=year,book_lend_member_id=None)
     library_management_service.update_book(book=up_book)
 
     print("\nBook updated Successfully")
@@ -96,7 +95,11 @@ def borrow_book():
     member_id = input("Enter Member ID: ")
     book_id = input("Enter Book ID: ")
 
-    new_loan = Loan(loan_id=loan_id,member_id=member_id,book_id=book_id)
+    new_loan = Loan(loan_id=loan_id,
+                    member_id=member_id,
+                    book_id=book_id,
+                    borrowed_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    returned_at=None)
     library_management_service.add_loan(loan=new_loan)
 
     borrow_book = library_management_service.get_book_by_id(book_id=book_id)
@@ -127,6 +130,8 @@ def list_all_loans():
 
 def return_book():
 
+    now = datetime.now()
+
     loan_id = input("Enter Loan ID: ")
     loan = library_management_service.get_loan_by_id(loan_id=loan_id)
 
@@ -134,7 +139,7 @@ def return_book():
                    member_id=loan.member_id,
                    book_id=loan.book_id,
                    borrowed_at=loan.borrowed_at,
-                   returned_at=datetime.now())
+                   returned_at=now.strftime("%Y-%m-%d %H:%M:%S"))
 
     library_management_service.update_loan(loan=up_loan)
 
@@ -142,7 +147,8 @@ def return_book():
     up_book = Book(book_id=borrow_book.book_id,
                    title=borrow_book.title,
                    author=borrow_book.author,
-                   year=borrow_book.year)
+                   year=borrow_book.year,
+                   book_lend_member_id=None)
     library_management_service.update_book(book=up_book)
 
 

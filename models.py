@@ -9,7 +9,7 @@ class Book:
     title: str
     author: str
     year: str
-    book_lend_member_id: Optional[str] = None
+    book_lend_member_id: Optional[str]
 
     def is_available(self):
         if str(self.book_lend_member_id) == "None":
@@ -31,7 +31,7 @@ class Loan:
     member_id: str
     book_id: str
     borrowed_at: datetime
-    returned_at: Optional[datetime] = None
+    returned_at: Optional[datetime]
 
     def is_active(self):
         return self.returned_at is None

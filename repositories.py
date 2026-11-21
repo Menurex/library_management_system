@@ -23,6 +23,10 @@ class BookRepository(ABC):
     def update_book(self, book: Book) -> None:
         pass
 
+    @abstractmethod
+    def save(self):
+        pass
+
 
 class MemberRepository(ABC):
 
@@ -42,6 +46,10 @@ class MemberRepository(ABC):
     def update_member(self, member: Member) -> None:
         pass
 
+    @abstractmethod
+    def save(self):
+        pass
+
 
 class LoanRepository(ABC):
 
@@ -59,6 +67,10 @@ class LoanRepository(ABC):
 
     @abstractmethod
     def update_loan(self, loan: Loan) -> None:
+        pass
+
+    @abstractmethod
+    def save(self):
         pass
 
 
@@ -81,7 +93,8 @@ class FileBasedBookRepository(BookRepository):
                                 title=split_data[1],
                                 author=split_data[2],
                                 year=split_data[3],
-                                book_lend_member_id=split_data[4])
+                                book_lend_member_id=
+                                None if split_data[4] == "None" else str(split_data[4]))
 
                     self.books[book.book_id] = book
 
@@ -108,6 +121,7 @@ class FileBasedBookRepository(BookRepository):
             raise ValueError("This book doesn't exists in library")
 
         self.books[book.book_id] = book
+        self.save()
 
     def get_by_id(self, book_id: str) -> Optional[Book]:
         return self.books.get(book_id)
@@ -158,6 +172,7 @@ class FileBasedMemberRepository(MemberRepository):
             raise ValueError("Member doesn't exists")
 
         self.members[member.member_id] = member
+        self.save()
 
 
 class FileBasedLoanRepository(LoanRepository):
@@ -192,7 +207,7 @@ class FileBasedLoanRepository(LoanRepository):
         with open("loans.txt", "w") as f:
 
             for loan in self.loans.values():
-                f.write(f"{loan.loan_id},{loan.member_id},{loan.book_id},{loan.borrowed_at},{loan.returned_at}")
+                f.write(f"{loan.loan_id},{loan.member_id},{loan.book_id},{loan.borrowed_at},{loan.returned_at}\n")
 
     def add_loan(self, loan: Loan) -> None:
         self.loans[loan.loan_id] = loan
@@ -209,3 +224,4 @@ class FileBasedLoanRepository(LoanRepository):
             raise ValueError("Loan doesn't exists")
 
         self.loans[loan.loan_id] = loan
+        self.save()
